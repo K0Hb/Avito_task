@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "users_balance"
+version = "0.1.0"
+description = "avit0_task"
+authors = ["Vjacheslav <goplit2010.konovalov@yandex.ru>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+python-dotenv = "^0.19.2"
+PyMySQL = "^1.0.2"
+
+[tool.poetry.dev-dependencies]
+flake8 = "^4.0.1"
+pytest = "^7.0.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
