@@ -29,23 +29,48 @@ def create_user(user_id, balance=None, history=None, connection=connection):
             connection.close()
 
 
-def get_user(id=None, connection=connection):
+def get_user_info(id=None,all=False, balance=False, connection=connection):
     with connection.cursor() as cursor:
         connection.ping()
         try:
-            cursor.execute(f"SELECT * FROM users_balance WHERE user_id = {id};")
-            result = cursor.fetchall()
-            connection.commit()
-            if result:
-                return result
-            else:
-                return 'Такого пользователя нет'
+            if all:
+                cursor.execute(f"SELECT * FROM users_balance WHERE user_id = {id};")
+                result = cursor.fetchall()
+                connection.commit()
+                if result:
+                    return result
+                else:
+                    return 'Такого пользователя нет'
+            elif balance:
+                cursor.execute(f"SELECT balance FROM users_balance WHERE user_id = {id};")
+                result = cursor.fetchall()
+                connection.commit()
+                if result[0]['balance'] is not None:
+                    return result
+                else:
+                    return 'Счет не сформирован'
         except Exception as e:
             print(e)
+            return e
         finally:
             connection.close()
 
-print(get_user(3))
+
+def enrollment_and_write_downs(user_id, sum):
+    with connection.cursor() as cursor:
+        connection.ping()
+        try:
+            cursor.execute(f"UPDATE users_balance SET balance = '{sum}' WHERE user_id = '{user_id}'")
+            connection.commit()
+            return 'Баланс успешно пополнен'
+        except Exception as e:
+            return e
+        finally:
+            connection.close()
+
+
+
+print(enrollment_and_write_downs(3, 100))
 # print(create_user(4))
 
 # CREATE DATABASE Avito;
