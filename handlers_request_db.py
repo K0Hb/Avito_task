@@ -1,5 +1,16 @@
-from urllib import response
+from email import message
 from requests_db import *
+
+
+LOG = True
+
+def hadler_logging(func):
+    def wrapper(*args, **qwargs):
+        result = func(*args, **qwargs)
+        if LOG:
+            print(result['message'])
+        return result
+    return wrapper
 
 
 def history_transaction_add(func):
@@ -10,22 +21,29 @@ def history_transaction_add(func):
         balance = result['balance']
         try:
             add_history_user(user_id, transaction_amount, balance)
-            print(f'В историю транзакций пользователся с id {user_id} успешно добавлена информация: изменен баланс на сумму {transaction_amount}.')
+            message = f'В историю транзакций пользователся с id {user_id} успешно добавлена информация: изменен баланс на сумму {transaction_amount}.'
         except Exception as e:
-            print(f'Произошла ошибка записи в историю транзакция пользователся с id {user_id}.')
-            print(e)
+            message = f'Произошла ошибка записи в историю транзакция пользователся с id {user_id}. Ошибка :{e}'
+        finally:
+            if LOG:
+                print(message)
         return result
     return wrapper
 
 
+@hadler_logging
 def handler_create_user(user_id):
     try:
         create_user(user_id)
-        return f'Пользователь c id {user_id} успешно создан.'
-    except pymysql.err.IntegrityError as e:
-        return f'Пользователь c id {user_id} уже существует.'
+        message = f'Пользователь c id {user_id} успешно создан.'
+    except pymysql.err.IntegrityError:
+        message =  f'Пользователь c id {user_id} уже существует.'
+    finally:
+        response = {'message' : message}
+        return response
 
 
+@hadler_logging
 def handler_user_info(user_id):
     try:
         if all:
@@ -47,7 +65,9 @@ def handler_user_info(user_id):
         }
         return response 
 
+
 @history_transaction_add
+@hadler_logging
 def handler_transactions(user_id, number, enrollment=False, write_down=False):
     number = float(number)
     balance = handler_user_info(user_id)['user_info']['balance']
@@ -83,6 +103,7 @@ def handler_transactions(user_id, number, enrollment=False, write_down=False):
         return response
 
 
+@hadler_logging
 def handler_transaction_user_user(user_donor, user_recepient, number):
     recepient_info = handler_user_info(user_recepient)['user_info']
     donor_info = handler_user_info(user_donor)['user_info']
@@ -98,8 +119,8 @@ def handler_transaction_user_user(user_donor, user_recepient, number):
         if recepient_info is None:
             user_id = user_recepient
         message = f'Пользователя с id {user_id} не сущесвует.'
-    print(message)
-    pass
+    response = {'message' : message}
+    return response
 
 
 handler_transaction_user_user(2, 1, 100)
