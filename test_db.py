@@ -1,5 +1,6 @@
 from requests_db import *
 import pytest
+import pymysql
 
 
 def test_create_delete_user():
@@ -38,4 +39,3 @@ def test_history():
     delete_user(2999)
     test_case = get_history_user(2999)
     assert test_case == None
-
