@@ -146,7 +146,7 @@ def handler_transaction_user_user(user_donor: int, user_recepient: int, number: 
 @hadler_logging
 @app.get('/user_history/{user_id}')
 def handler_get_history(user_id: int, sorted_amount: bool=False, sorted_data: bool=False):
-    history_dict = {}
+    history_list = []
     if handler_user_info(user_id)['balance'] is not None:
         try:
             history = get_history_user(user_id, sorted_amount=sorted_amount, sorted_data=sorted_data)
@@ -155,15 +155,15 @@ def handler_get_history(user_id: int, sorted_amount: bool=False, sorted_data: bo
             history = []
             message = f'История транзакция пользователся с id {user_id}, не получена.Ошибка {e}'
 
-        for index, transaction in enumerate(history):
+        for transaction in history:
             info_transaction = {
                 'data' : transaction['data'],
                 'balance' : transaction['balance'],
                 'amount' : transaction['transaction'],
                 'purpose' : transaction['purpose'],
             }
-            history_dict[index] = info_transaction
+            history_list.append(info_transaction)
     else:
         message = f'История транзакция пользователся с id {user_id}, не получена.'
-    response = {'message' : message, 'history' : history_dict}
+    response = {'message' : message, 'history' : history_list}
     return response
