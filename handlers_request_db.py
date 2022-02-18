@@ -91,7 +91,7 @@ def handler_transactions(user_id, number, purpose=None, enrollment=False, write_
             else:
                 new_balance = balance - number
                 enrollment_and_write_downs(user_id, new_balance)
-                transaction = -number
+                transaction = number
                 balance = new_balance
                 message = f'У пользователя с id {user_id} успешно списана сумма({number}) с баланса.'
                 if purpose is None:
@@ -131,21 +131,27 @@ def handler_transaction_user_user(user_donor, user_recepient, number):
 
 
 @hadler_logging
-def handler_get_history(user_id):
+def handler_get_history(user_id, sorted_amount=False, sorted_data=False):
+    history_dict = {}
     if handler_user_info(user_id)['user_info'] is not None:
         try:
-            history = get_history_user(user_id)
+            history = get_history_user(user_id, sorted_amount=sorted_amount, sorted_data=sorted_data)
             message = f'История транзакция пользователся с id {user_id}, успешно получена.'
         except Exception as e:
             history = []
             message = f'История транзакция пользователся с id {user_id}, не получена.Ошибка {e}'
 
-        for transaction in history:
-            print(transaction)
-
+        for index, transaction in enumerate(history):
+            info_transaction = {
+                'data' : transaction['data'],
+                'balance' : transaction['balance'],
+                'amount' : transaction['transaction'],
+                'purpose' : transaction['purpose'],
+            }
+            history_dict[index] = info_transaction
     else:
         message = f'История транзакция пользователся с id {user_id}, не получена.'
-    response = {'message' : message}
+    response = {'message' : message, 'history' : history_dict}
     return response
 
 

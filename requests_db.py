@@ -50,10 +50,15 @@ def add_history_user(user_id, transaction, balance, purpose,connection=connectio
         connection.close()
 
 
-def get_history_user(user_id, connection=connection):
+def get_history_user(user_id, sorted_amount=False, sorted_data=False, connection=connection):
     with connection.cursor() as cursor:
         connection.ping()
-        cursor.execute(f"SELECT * FROM transaction_history WHERE user_id = {user_id};")
+        if sorted_amount == False and sorted_data == False:
+            cursor.execute(f"SELECT data, balance, transaction, purpose FROM transaction_history WHERE user_id = {user_id};")
+        elif sorted_amount:
+            cursor.execute(f"SELECT data, balance, transaction, purpose FROM transaction_history WHERE user_id = {user_id} ORDER BY transaction;")
+        elif sorted_data:
+            cursor.execute(f"SELECT data, balance, transaction, purpose FROM transaction_history WHERE user_id = {user_id} ORDER BY data;")
         result = cursor.fetchall()
         connection.commit()
         connection.close()
