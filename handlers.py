@@ -6,7 +6,7 @@ from fastapi import FastAPI
 app = FastAPI()
 
 
-LOG = True
+LOG = False
 
 def hadler_logging(func):
     def wrapper(*args, **qwargs):
