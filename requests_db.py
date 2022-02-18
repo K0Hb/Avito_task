@@ -42,10 +42,10 @@ def enrollment_and_write_downs(user_id, number, connection=connection):
         connection.close()
 
 
-def add_history_user(user_id, transaction, balance, connection=connection):
+def add_history_user(user_id, transaction, balance, purpose,connection=connection):
     with connection.cursor() as cursor:
         connection.ping()
-        cursor.execute(f"INSERT INTO transaction_history (user_id, transaction, balance) VALUES ('{user_id}', '{transaction}', '{balance}');")
+        cursor.execute(f"INSERT INTO transaction_history (user_id, transaction, balance, purpose) VALUES ('{user_id}', '{transaction}', '{balance}', '{purpose}');")
         connection.commit()
         connection.close()
 
@@ -67,4 +67,4 @@ def get_history_user(user_id, connection=connection):
 # CREATE TABLE users (id INT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(255) NOT NULL, surname VARCHAR(255) NOT NULL, patronymic VARCHAR(255) NOT NULL);
 # CREATE TABLE balance (id INT PRIMARY KEY AUTO_INCREMENT, balance NUMERIC, user_id INT, FOREIGN KEY (user_id) REFERENCES users(id));
 # CREATE TABLE users_balance (user_id INT PRIMARY KEY UNIQUE ,  balance DECIMAL(15,2));
-# CREATE TABLE transaction_history (id INT PRIMARY KEY AUTO_INCREMENT, user_id INT, data TIMESTAMP DEFAULT CURRENT_TIMESTAMP, transaction TEXT, balance DECIMAL(15,2), FOREIGN KEY (user_id)  REFERENCES users_balance (user_id));
+# CREATE TABLE transaction_history (id INT PRIMARY KEY AUTO_INCREMENT, user_id INT, data TIMESTAMP DEFAULT CURRENT_TIMESTAMP, transaction TEXT, balance DECIMAL(15,2), purpose TEXT, FOREIGN KEY (user_id)  REFERENCES users_balance (user_id));

@@ -19,8 +19,9 @@ def history_transaction_add(func):
         user_id = result['user_id']
         transaction_amount = result['transaction']
         balance = result['balance']
+        purpose = result['purpose']
         try:
-            add_history_user(user_id, transaction_amount, balance)
+            add_history_user(user_id, transaction_amount, balance, purpose)
             message = f'В историю транзакций пользователся с id {user_id} успешно добавлена информация: изменен баланс на сумму {transaction_amount}.'
         except Exception as e:
             message = f'Произошла ошибка записи в историю транзакция пользователся с id {user_id}. Ошибка :{e}'
@@ -68,7 +69,7 @@ def handler_user_info(user_id):
 
 @history_transaction_add
 @hadler_logging
-def handler_transactions(user_id, number, enrollment=False, write_down=False):
+def handler_transactions(user_id, number, purpose=None, enrollment=False, write_down=False):
     number = float(number)
     balance = handler_user_info(user_id)['user_info']['balance']
     if balance is None:
@@ -81,6 +82,8 @@ def handler_transactions(user_id, number, enrollment=False, write_down=False):
             transaction = number
             balance = new_balance
             message = f'Успешно пополнен баланс пользователя с id {user_id}, на сумму({number}).'
+            if purpose is None:
+                purpose = 'Пополнение'
         elif write_down:
             if balance - number <0:
                 transaction = 0
@@ -91,6 +94,8 @@ def handler_transactions(user_id, number, enrollment=False, write_down=False):
                 transaction = -number
                 balance = new_balance
                 message = f'У пользователя с id {user_id} успешно списана сумма({number}) с баланса.'
+                if purpose is None:
+                    purpose = 'Списание'
     except Exception as e:
         message = f'При транзакции произошла ошибка: {e}.'
     finally:
@@ -99,6 +104,7 @@ def handler_transactions(user_id, number, enrollment=False, write_down=False):
             'balance' : balance,
             'transaction' : transaction,
             'message' : message,
+            'purpose' : purpose
             }
         return response
 
@@ -109,9 +115,10 @@ def handler_transaction_user_user(user_donor, user_recepient, number):
     donor_info = handler_user_info(user_donor)['user_info']
     if recepient_info is not None and donor_info is not None:
         if donor_info['balance'] is not None and donor_info['balance'] >= number:
-            handler_transactions(user_donor, number, write_down=True)
-            handler_transactions(user_recepient, number, enrollment=True)
-            message = f'Транзакция от пользователся с id {user_donor} к пользователю с id {user_recepient}, на сумму {number},проведена успешно.'
+            purpose = f'Транзакция от пользователся с id {user_donor} к пользователю с id {user_recepient}, на сумму {number}'
+            handler_transactions(user_donor, number, write_down=True, purpose=purpose)
+            handler_transactions(user_recepient, number, enrollment=True, purpose=purpose)
+            message = f'{purpose}, проведена успешно.'
         else:
             message = f'У пользователя с id {user_donor} не достаточно средств на балансе'
     else:
@@ -123,9 +130,29 @@ def handler_transaction_user_user(user_donor, user_recepient, number):
     return response
 
 
-handler_transaction_user_user(2, 1, 100)
-# handler_create_user(2)
-# print(handler_transactions(2, 200, write_down=True))
+@hadler_logging
+def handler_get_history(user_id):
+    if handler_user_info(user_id)['user_info'] is not None:
+        try:
+            history = get_history_user(user_id)
+            message = f'История транзакция пользователся с id {user_id}, успешно получена.'
+        except Exception as e:
+            history = []
+            message = f'История транзакция пользователся с id {user_id}, не получена.Ошибка {e}'
+
+        for transaction in history:
+            print(transaction)
+
+    else:
+        message = f'История транзакция пользователся с id {user_id}, не получена.'
+    response = {'message' : message}
+    return response
+
+
+handler_get_history(2)
+# handler_create_user(3)
+# handler_transactions(2, 5000.50, enrollment=True)
 # print(handler_user_info(1))
 # print(handler_user_info(2))
 # handler_create_user(1)
+# handler_transaction_user_user(2,3, 200.03)
