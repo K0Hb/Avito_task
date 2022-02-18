@@ -1,6 +1,9 @@
-from email import message
 from requests_db import *
 from request_currency import yahoo_get_currency
+from fastapi import FastAPI
+
+
+app = FastAPI()
 
 
 LOG = True
@@ -44,7 +47,7 @@ def handler_create_user(user_id):
         response = {'message' : message}
         return response
 
-
+@app.get('/')
 @hadler_logging
 def handler_user_info(user_id, currency='RUB'):
     currency_list = ['USD', 'EUR']
@@ -63,7 +66,6 @@ def handler_user_info(user_id, currency='RUB'):
     finally:
         if currency != 'RUB' and currency in currency_list:
             currency_rate = yahoo_get_currency(currency)
-            # print(type(float(result['balance'])), type(currency_rate))
             result['balance'] =  round(float(result['balance']) / currency_rate, 2)
         response = {
             'user_id' : user_id,
