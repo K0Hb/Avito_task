@@ -1,5 +1,6 @@
 from email import message
 from requests_db import *
+from request_currency import yahoo_get_currency
 
 
 LOG = True
@@ -45,7 +46,8 @@ def handler_create_user(user_id):
 
 
 @hadler_logging
-def handler_user_info(user_id):
+def handler_user_info(user_id, currency='RUB'):
+    currency_list = ['USD', 'EUR']
     try:
         if all:
             user_info = get_user_info(user_id)
@@ -59,10 +61,15 @@ def handler_user_info(user_id):
         message = f'Пользователь с id {user_id}, не создан. Исключение: {e}.'
         result = None
     finally:
+        if currency != 'RUB' and currency in currency_list:
+            currency_rate = yahoo_get_currency(currency)
+            # print(type(float(result['balance'])), type(currency_rate))
+            result['balance'] =  round(float(result['balance']) / currency_rate, 2)
         response = {
             'user_id' : user_id,
-            'user_info' : result,
-            'message' : message
+            'balance' : result['balance'],
+            'cureency' : currency,
+            'message' : message,
         }
         return response 
 
@@ -71,7 +78,7 @@ def handler_user_info(user_id):
 @hadler_logging
 def handler_transactions(user_id, number, purpose=None, enrollment=False, write_down=False):
     number = float(number)
-    balance = handler_user_info(user_id)['user_info']['balance']
+    balance = handler_user_info(user_id)['balance']
     if balance is None:
         balance = 0.0
     balance = float(balance)
@@ -111,8 +118,8 @@ def handler_transactions(user_id, number, purpose=None, enrollment=False, write_
 
 @hadler_logging
 def handler_transaction_user_user(user_donor, user_recepient, number):
-    recepient_info = handler_user_info(user_recepient)['user_info']
-    donor_info = handler_user_info(user_donor)['user_info']
+    recepient_info = handler_user_info(user_recepient)['balance']
+    donor_info = handler_user_info(user_donor)['balance']
     if recepient_info is not None and donor_info is not None:
         if donor_info['balance'] is not None and donor_info['balance'] >= number:
             purpose = f'Транзакция от пользователся с id {user_donor} к пользователю с id {user_recepient}, на сумму {number}'
@@ -133,7 +140,7 @@ def handler_transaction_user_user(user_donor, user_recepient, number):
 @hadler_logging
 def handler_get_history(user_id, sorted_amount=False, sorted_data=False):
     history_dict = {}
-    if handler_user_info(user_id)['user_info'] is not None:
+    if handler_user_info(user_id)['balance'] is not None:
         try:
             history = get_history_user(user_id, sorted_amount=sorted_amount, sorted_data=sorted_data)
             message = f'История транзакция пользователся с id {user_id}, успешно получена.'
@@ -155,10 +162,10 @@ def handler_get_history(user_id, sorted_amount=False, sorted_data=False):
     return response
 
 
-handler_get_history(2)
+# handler_get_history(2)
 # handler_create_user(3)
 # handler_transactions(2, 5000.50, enrollment=True)
 # print(handler_user_info(1))
-# print(handler_user_info(2))
+print(handler_user_info(2, currency='USD'))
 # handler_create_user(1)
 # handler_transaction_user_user(2,3, 200.03)
