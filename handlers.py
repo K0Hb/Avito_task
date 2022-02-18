@@ -124,8 +124,8 @@ def handler_transaction(user_id: int, number: float, purpose: str=None, enrollme
 @hadler_logging
 @app.get('/transaction_user_user/{user_id}')
 def handler_transaction_user_user(user_donor: int, user_recepient: int, number: float):
-    recepient_info = handler_user_info(user_recepient)['balance']
-    donor_info = handler_user_info(user_donor)['balance']
+    recepient_info = handler_user_info(user_recepient)
+    donor_info = handler_user_info(user_donor)
     if recepient_info is not None and donor_info is not None:
         if donor_info['balance'] is not None and donor_info['balance'] >= number:
             purpose = f'Транзакция от пользователся с id {user_donor} к пользователю с id {user_recepient}, на сумму {number}'
