@@ -5,37 +5,9 @@ from app.handlers import handler_create_user, handler_transaction, \
     handler_transaction_user_user, handler_user_info, \
     handler_get_history
 from app.requests_db import delete_user, create_user
+from tests.decorator import delete_data_test
 
 USER_ID = 2999
-
-
-def delete_data_test(func):
-    '''
-    Декоратор созданет и удаленет полльзователя,
-    для удаления данных из БД,
-    независимо от результат тестов.
-    '''
-
-    def wraper(*args, **qwargs):
-        create_user(USER_ID)
-        try:
-            result = func(*args, **qwargs)
-            return result
-        except AssertionError:
-            _, _, tb = sys.exc_info()
-            traceback.print_tb(tb)
-            tb_info = traceback.extract_tb(tb)
-            _, line, _, text = tb_info[-1]
-
-            print(
-                'An error occurred on line '
-                '{} in statement {}'.format(line, text)
-            )
-            exit(1)
-        finally:
-            delete_user(USER_ID)
-
-    return wraper
 
 
 def test_create_user():
@@ -44,10 +16,12 @@ def test_create_user():
         первый раз и на повторное создание.
         (перезаписывть пользователя нельзя).
     '''
+    delete_user(USER_ID)
     assert handler_create_user(
         USER_ID) == {'message': 'Пользователь c id 2999 успешно создан.'}
     assert handler_create_user(
         USER_ID) == {'message': 'Пользователь c id 2999 уже существует.'}
+    assert handler_user_info(USER_ID)['user_id'] == USER_ID
     delete_user(USER_ID)
 
 

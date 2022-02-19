@@ -1,7 +1,9 @@
 import pytest
 
-from app.requests_db import *
+from app.requests_db import create_user, get_user_info, delete_user, \
+    enrollment_and_write_downs, add_history_user, get_history_user
 from test_handlers import delete_data_test
+from tests.decorator import delete_data_test
 
 USER_ID = 2999
 
@@ -10,6 +12,7 @@ def test_create_delete_user():
     '''
     Тест проверят обработку данных при создание пользователся.
     '''
+    delete_user(USER_ID)
     assert create_user(USER_ID) == 1
     assert get_user_info(USER_ID) == [{'user_id': 2999, 'balance': None}]
     assert delete_user(USER_ID) == 1

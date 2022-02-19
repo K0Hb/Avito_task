@@ -1,7 +1,9 @@
 from fastapi import FastAPI
+import pymysql
 
 from request_currency import yahoo_get_currency
-from requests_db import *
+from requests_db import add_history_user, create_user, get_user_info, \
+    enrollment_and_write_downs, get_history_user
 
 app = FastAPI()
 
