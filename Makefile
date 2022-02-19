@@ -1,2 +1,5 @@
 run :
-	uvicorn handlers:app --reload
+	uvicorn app.handlers:app --reload
+
+lint :
+	poetry run flake8

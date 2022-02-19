@@ -6,3 +6,4 @@ recup_dir.1
 .log/
 .env
 venv
+dist/

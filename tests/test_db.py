@@ -48,4 +48,4 @@ def test_history():
     assert test_case[1]['purpose'] == 'test2'
     delete_user(USER_ID)
     test_case = get_history_user(USER_ID)
-    assert test_case == None
+    assert test_case is None
