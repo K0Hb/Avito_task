@@ -1,4 +1,4 @@
-from handlers import *
+from app.handlers import *
 from requests_db import delete_user, create_user
 import sys
 import traceback
@@ -109,10 +109,14 @@ import traceback
 def test_transaction_user_user():
     create_user(2999)
     create_user(3000)
-    test_message = 'Транзакция от пользователся с id 2999 к пользователю с id 3000, на сумму 1000, проведена успешно.'
+    test_message1 = 'Транзакция от пользователся с id 2999 к пользователю с id 3000, на сумму 1000, проведена успешно.'
+    test_message2 = 'У пользователя с id 2999 не достаточно средств на балансе'
     try:
         handler_transaction(2999, 1001, 'test1', enrollment=True)
-        assert handler_transaction_user_user(2999, 3000, 1000)['message'] == test_message
+        assert handler_transaction_user_user(2999, 3000, 1000)['message'] == test_message1
+        assert float(get_user_info(2999)[0]['balance']) == 1.0
+        assert float(get_user_info(3000)[0]['balance']) == 1000.0
+        assert handler_transaction_user_user(2999, 3000, 2.0)['message'] == test_message2
     except AssertionError as e:
         _, _, tb = sys.exc_info()
         traceback.print_tb(tb) # Fixed format
@@ -124,4 +128,3 @@ def test_transaction_user_user():
     finally:
         delete_user(2999)
         delete_user(3000)
-test_transaction_user_user()

@@ -1,4 +1,4 @@
-from requests_db import *
+from app.requests_db import *
 from test_handlers import delete_data_test
 import pytest
 

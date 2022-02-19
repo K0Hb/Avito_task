@@ -5,3 +5,4 @@ recup_dir.1
 .idea/
 .log/
 .env
+venv
