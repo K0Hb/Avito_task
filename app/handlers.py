@@ -1,6 +1,7 @@
-from requests_db import *
-from request_currency import yahoo_get_currency
 from fastapi import FastAPI
+
+from request_currency import yahoo_get_currency
+from requests_db import *
 
 app = FastAPI()
 

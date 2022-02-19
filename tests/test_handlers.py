@@ -1,9 +1,10 @@
+import sys
+import traceback
+
 from app.handlers import handler_create_user, handler_transaction, \
     handler_transaction_user_user, handler_user_info, \
     handler_get_history
 from app.requests_db import delete_user, create_user
-import sys
-import traceback
 
 USER_ID = 2999
 

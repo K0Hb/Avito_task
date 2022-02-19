@@ -1,6 +1,7 @@
+import pytest
+
 from app.requests_db import *
 from test_handlers import delete_data_test
-import pytest
 
 USER_ID = 2999
 
