@@ -45,10 +45,10 @@ def test_history():
     add_history_user(USER_ID, 50.05, 155.55, 'test2')
     test_case = get_history_user(USER_ID)
     assert float(test_case[0]['balance']) == 100.50
-    assert float(test_case[0]['transaction']) == 100.5
+    assert float(test_case[0]['amount']) == 100.5
     assert test_case[0]['purpose'] == 'test1'
     assert float(test_case[1]['balance']) == 155.55
-    assert float(test_case[1]['transaction']) == 50.05
+    assert float(test_case[1]['amount']) == 50.05
     assert test_case[1]['purpose'] == 'test2'
     delete_user(USER_ID)
     test_case = get_history_user(USER_ID)

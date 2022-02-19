@@ -29,11 +29,14 @@ def create_user(user_id, connection=connection):
     '''
     with connection.cursor() as cursor:
         connection.ping()
-        result = cursor.execute(f"INSERT INTO users_balance (user_id) "
-                                f"VALUES ('{user_id}');")
+        try:
+            result = cursor.execute("INSERT INTO users_balance (user_id) VALUES (%(user_id)s);""", {'user_id': user_id})
+        except Exception:
+            return 0
         connection.commit()
         connection.close()
         return result
+
 
 
 def delete_user(user_id, connection=connection):
@@ -42,8 +45,7 @@ def delete_user(user_id, connection=connection):
     '''
     with connection.cursor() as cursor:
         connection.ping()
-        result = cursor.execute(f"DELETE FROM users_balance "
-                                f"WHERE user_id = '{user_id}';")
+        result = cursor.execute("""DELETE FROM users_balance WHERE user_id = '%(user_id)s'""", {'user_id': user_id})
         connection.commit()
         connection.close()
         return result
@@ -55,8 +57,7 @@ def get_user_info(user_id, connection=connection):
     '''
     with connection.cursor() as cursor:
         connection.ping()
-        cursor.execute(f"SELECT * FROM users_balance "
-                       f"WHERE user_id = {user_id};")
+        cursor.execute('''SELECT * FROM users_balance WHERE user_id = %(user_id)s''', {'user_id': user_id})
         result = cursor.fetchall()
         connection.commit()
         connection.close()
@@ -74,8 +75,7 @@ def enrollment_and_write_downs(user_id, balance, connection=connection):
         raise Exception('Баланс не может быть ниже 0.')
     with connection.cursor() as cursor:
         connection.ping()
-        cursor.execute(f"UPDATE users_balance SET balance = '{balance}'"
-                       f" WHERE user_id = '{user_id}'")
+        cursor.execute("""UPDATE users_balance SET balance = '%(balance)s' WHERE user_id = '%(user_id)s'""", {'user_id': user_id, 'balance' : balance})
         connection.commit()
         connection.close()
 
@@ -88,10 +88,11 @@ def add_history_user(user_id, number, balance, purpose, connection=connection):
     '''
     with connection.cursor() as cursor:
         connection.ping()
-        cursor.execute(
-            f"INSERT INTO transaction_history "
-            f"(user_id, transaction, balance, purpose) "
-            f"VALUES ('{user_id}', '{number}', '{balance}', '{purpose}');")
+        cursor.execute("""
+            INSERT INTO transaction_history 
+            (user_id, amount, balance, purpose) 
+            VALUES ('%(user_id)s', '%(number)s', '%(balance)s', %(purpose)s)""",
+            {'user_id': user_id, 'balance' : balance, 'number' : number, 'purpose': purpose})
         connection.commit()
         connection.close()
 
@@ -106,19 +107,22 @@ def get_history_user(user_id, sorted_amount=False, sorted_data=False,
     with connection.cursor() as cursor:
         connection.ping()
         if sorted_amount:
-            cursor.execute(
-                f"SELECT data, balance, transaction, purpose "
-                f"FROM transaction_history "
-                f"WHERE user_id = {user_id} ORDER BY transaction;")
+            cursor.execute("""
+                SELECT data, balance, amount, purpose 
+                FROM transaction_history 
+                WHERE user_id = %(user_id)s ORDER BY transaction""",
+                 {'user_id': user_id})
         elif sorted_data:
-            cursor.execute(
-                f"SELECT data, balance, transaction, purpose "
-                f"FROM transaction_history "
-                f"WHERE user_id = {user_id} ORDER BY data;")
+            cursor.execute("""
+                SELECT data, balance, amount, purpose 
+                FROM transaction_history 
+                WHERE user_id = %(user_id)s ORDER BY data""",
+                {'user_id': user_id})
         else:
-            cursor.execute(
-                f"SELECT data, balance, transaction, purpose "
-                f"FROM transaction_history WHERE user_id = {user_id};")
+            cursor.execute("""
+                SELECT data, balance, amount, purpose 
+                FROM transaction_history WHERE user_id = %(user_id)s""",
+                {'user_id': user_id})
         result = cursor.fetchall()
         connection.commit()
         connection.close()

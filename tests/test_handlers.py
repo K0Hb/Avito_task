@@ -33,7 +33,7 @@ def test_transactions_user():
     response_case1 = {
         'user_id': 2999,
         'balance': 100.5,
-        'transaction': 100.5,
+        'amount': 100.5,
         'message': 'Успешно пополнен баланс пользователя с '
                    'id 2999, на сумму(100.5).',
         'purpose': 'test1'
@@ -51,7 +51,7 @@ def test_transactions_user():
     response_case2 = {
         'user_id': 2999,
         'balance': 50.0,
-        'transaction': 50.5,
+        'amount': 50.5,
         'message': 'У пользователя с id 2999 успешно '
                    'списана сумма(50.5) с баланса.',
         'purpose': 'test2'
@@ -78,18 +78,18 @@ def test_history_user():
     history = handler_get_history(USER_ID)
     transaction1 = {
         'balance': 100.50,
-        'amount': '100.5',
+        'amount': 100.50,
         'purpose': 'test1'
     }
     transaction2 = {
         'balance': 50.00,
-        'amount': '50.5',
+        'amount': 50.50,
         'purpose': 'test2'}
     assert float(history['history'][0]['balance']) == transaction1['balance']
-    assert history['history'][0]['amount'] == transaction1['amount']
+    assert float(history['history'][0]['amount']) == transaction1['amount']
     assert history['history'][0]['purpose'] == transaction1['purpose']
     assert float(history['history'][1]['balance']) == transaction2['balance']
-    assert history['history'][1]['amount'] == transaction2['amount']
+    assert float(history['history'][1]['amount']) == transaction2['amount']
     assert history['history'][1]['purpose'] == transaction2['purpose']
 
 

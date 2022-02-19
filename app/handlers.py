@@ -24,7 +24,7 @@ def history_transaction_add(func):
     def wrapper(*args, **qwargs):
         result = func(*args, **qwargs)
         user_id = result['user_id']
-        transaction_amount = result['transaction']
+        transaction_amount = result['amount']
         balance = result['balance']
         purpose = result['purpose']
         try:
@@ -46,14 +46,12 @@ def history_transaction_add(func):
 @hadler_logging
 @app.get('/create_user/{user_id}')
 def handler_create_user(user_id: int):
-    try:
-        create_user(user_id)
+    if create_user(user_id) == 1:
         message = f'Пользователь c id {user_id} успешно создан.'
-    except pymysql.err.IntegrityError:
+    elif create_user(user_id) == 0:
         message = f'Пользователь c id {user_id} уже существует.'
-    finally:
-        response = {'message': message}
-        return response
+    response = {'message': message}
+    return response
 
 
 @hadler_logging
@@ -61,18 +59,17 @@ def handler_create_user(user_id: int):
 def handler_user_info(user_id: int, currency: str = 'RUB'):
     currency_list = ['USD', 'EUR']
     try:
-        if all:
-            user_info = get_user_info(user_id)
-            if user_info:
-                message = f'Информация о пользователе с id {user_id}, ' \
-                          f'успешно получена.'
-                result = user_info[0]
-            else:
-                message = f'Пользователь с id {user_id}, не создан.'
-                result = None
+        user_info = get_user_info(user_id)
+        if user_info:
+            message = f'Информация о пользователе с id {user_id}, ' \
+                        f'успешно получена.'
+            result = user_info[0]
+        else:
+            message = f'Пользователь с id {user_id}, не создан.'
+            result = {}
     except Exception as e:
         message = f'Пользователь с id {user_id}, не создан. Исключение: {e}.'
-        result = None
+        result = {}
     finally:
         if currency != 'RUB' and currency in currency_list:
             currency_rate = yahoo_get_currency(currency)
@@ -80,7 +77,7 @@ def handler_user_info(user_id: int, currency: str = 'RUB'):
                 float(result['balance']) / currency_rate, 2)
         response = {
             'user_id': user_id,
-            'balance': result['balance'],
+            'balance': result.get('balance'),
             'cureency': currency,
             'message': message,
         }
@@ -130,7 +127,7 @@ def handler_transaction(user_id: int,
         response = {
             'user_id': user_id,
             'balance': balance,
-            'transaction': transaction,
+            'amount': transaction,
             'message': message,
             'purpose': purpose
         }
@@ -183,15 +180,17 @@ def handler_get_history(user_id: int,
             history = []
             message = f'История транзакция пользователся с' \
                       f' id {user_id}, не получена.Ошибка {e}'
-
-        for transaction in history:
-            info_transaction = {
-                'data': transaction['data'],
-                'balance': transaction['balance'],
-                'amount': transaction['transaction'],
-                'purpose': transaction['purpose'],
-            }
-            history_list.append(info_transaction)
+        if history is None:
+            message = f'История транзакция пользователся с id {user_id} пустая'
+        else:
+            for transaction in history:
+                info_transaction = {
+                    'data': transaction['data'],
+                    'balance': transaction['balance'],
+                    'amount': transaction['amount'],
+                    'purpose': transaction['purpose'],
+                }
+                history_list.append(info_transaction)
     else:
         message = f'История транзакция пользователся с id {user_id}, ' \
                   f'не получена.'
