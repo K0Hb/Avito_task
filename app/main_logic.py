@@ -2,7 +2,6 @@ from request_currency import yahoo_get_currency
 from requests_db import add_history_user, create_user, get_user_info, \
     enrollment_and_write_downs, get_history_user
 
-
 LOG = False
 
 
@@ -49,13 +48,13 @@ def logic_create_user(user_id: int):
 
 
 @hadler_logging
-def logic_get_user_info(user_id:int , currency: str):
+def logic_get_user_info(user_id: int, currency: str):
     currency_list = ['USD', 'EUR']
     try:
         user_info = get_user_info(user_id)[0]
         if user_info:
             message = f'Информация о пользователе с id {user_id}, ' \
-                        f'успешно получена.'
+                      f'успешно получена.'
             balance = user_info['balance']
         else:
             message = f'Пользователь с id {user_id}, не создан.'
@@ -76,12 +75,13 @@ def logic_get_user_info(user_id:int , currency: str):
 @history_transaction_add
 @hadler_logging
 def logic_transaction(user_id: int, amount: float, purpose: str,
-                        enrollment: bool=False,write_down: bool=False):
+                      enrollment: bool = False, write_down: bool = False):
     user_info = get_user_info(user_id)
     if user_info:
         balance = get_user_info(user_id)[0]['balance']
     else:
-        message = f'Невозможно произвести транзакцию, т.к. пользователя с id {user_id} нет в базе'
+        message = f'Невозможно произвести транзакцию, т.к. ' \
+                  f'пользователя с id {user_id} нет в базе'
     if balance is None:
         balance = 0.0
     balance = float(balance)
@@ -110,17 +110,19 @@ def logic_transaction(user_id: int, amount: float, purpose: str,
         message = f'При транзакции произошла ошибка: {e}.'
     finally:
         result = {
-            'user_id' : user_id,
-            'amount' : amount,
-            'balance' : balance,
-            'purpose' : purpose,
-            'message' : message
+            'user_id': user_id,
+            'amount': amount,
+            'balance': balance,
+            'purpose': purpose,
+            'message': message
         }
         return result
 
 
 @hadler_logging
-def logic_transaction_user_user(user_donor: int, user_recepient: int, amount: float):
+def logic_transaction_user_user(user_donor: int,
+                                user_recepient: int,
+                                amount: float):
     recepient_info = get_user_info(user_recepient)[0]
     donor_info = get_user_info(user_donor)[0]
     balance = donor_info['balance']
@@ -146,7 +148,9 @@ def logic_transaction_user_user(user_donor: int, user_recepient: int, amount: fl
     return message, balance
 
 
-def logic_get_history(user_id: int, sorted_amount: bool=False, sorted_data: bool=False):
+def logic_get_history(user_id: int,
+                      sorted_amount: bool = False,
+                      sorted_data: bool = False):
     history_list = []
     if get_user_info(user_id)[0]['balance'] is not None:
         try:

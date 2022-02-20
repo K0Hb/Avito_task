@@ -1,6 +1,7 @@
 from fastapi import FastAPI
-from main_logic import logic_create_user, logic_get_user_info, logic_transaction, logic_transaction_user_user, logic_get_history
 
+from main_logic import logic_create_user, logic_get_user_info,\
+    logic_transaction, logic_transaction_user_user, logic_get_history
 
 LOG = False
 app = FastAPI()
@@ -14,7 +15,7 @@ def handler_create_user(user_id: int):
 
 @app.get('/user_info/{user_id}')
 def handler_user_info(user_id: int, currency: str = 'RUB'):
-    message, balance =logic_get_user_info(user_id, currency)
+    message, balance = logic_get_user_info(user_id, currency)
     response = {
         'user_id': user_id,
         'balance': balance,
@@ -46,10 +47,11 @@ def handler_transaction(user_id: int,
 def handler_transaction_user_user(user_donor: int,
                                   user_recepient: int,
                                   amount: float):
-    message, balance = logic_transaction_user_user(user_donor, user_recepient, amount)
+    message, balance = logic_transaction_user_user(
+        user_donor, user_recepient, amount)
     response = {'message': message,
-                'amount' : amount,
-                'balance' : balance
+                'amount': amount,
+                'balance': balance
                 }
     return response
 
@@ -58,6 +60,7 @@ def handler_transaction_user_user(user_donor: int,
 def handler_get_history(user_id: int,
                         sorted_amount: bool = False,
                         sorted_data: bool = False):
-    message, history_list = logic_get_history(user_id, sorted_amount, sorted_data)
+    message, history_list = logic_get_history(
+        user_id, sorted_amount, sorted_data)
     response = {'message': message, 'history': history_list}
     return response

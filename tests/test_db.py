@@ -17,7 +17,7 @@ def test_create_delete_user():
     assert get_user_info(USER_ID) == [{'user_id': 2999, 'balance': None}]
     assert delete_user(USER_ID) == 1
     assert delete_user(USER_ID) == 0
-    assert get_user_info(USER_ID) == None
+    assert get_user_info(USER_ID) is None
     delete_user(USER_ID)
 
 

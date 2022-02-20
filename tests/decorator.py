@@ -1,6 +1,8 @@
-from app.requests_db import delete_user, create_user
 import sys
 import traceback
+
+from app.requests_db import delete_user, create_user
+
 USER_ID = 2999
 
 
