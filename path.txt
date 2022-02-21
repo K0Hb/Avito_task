@@ -1,8 +1,0 @@
-PYTHONPATH=$PYTHONPATH:/home/vjachesalv/Avito_task
-PYTHONPATH=$PYTHONPATH:/home/vjachesalv/Avito_task/app
-PYTHONPATH=$PYTHONPATH:/home/vjachesalv/Avito_task/tests
-export PYTHONPATH
-echo $PYTHONPATH
-
-
-Мои проблемы с путями, пока так пофиксил
