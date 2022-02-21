@@ -1,3 +1,6 @@
+<a href="https://codeclimate.com/github/K0Hb/Avito_task/maintainability"><img src="https://api.codeclimate.com/v1/badges/97376614187286510812/maintainability" /></a>
+<a href="https://codeclimate.com/github/K0Hb/Avito_task/test_coverage"><img src="https://api.codeclimate.com/v1/badges/97376614187286510812/test_coverage" /></a>
+
 # Avito_task
 
 Реализован микросервис для работы с балансом пользователей (зачисление средств, списание средств, перевод средств от пользователя к пользователю, а также метод получения баланса пользователя). Сервис предоставляет HTTP API и принимает/отдавает запросы/ответы в формате JSON.
