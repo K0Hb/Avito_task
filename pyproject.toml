@@ -3,7 +3,6 @@ name = "avito_task"
 version = "0.1.0"
 description = "API servic"
 authors = ["Vjacheslav <goplit2010.konovalov@yandex.ru>"]
-packages = [ {include = "app"}, ]
 
 [tool.poetry.dependencies]
 python = "^3.8"
