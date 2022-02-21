@@ -8,3 +8,5 @@ recup_dir.1
 venv
 dist/
 path.txt
+.coverage
+coverage.xml

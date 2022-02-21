@@ -5,4 +5,4 @@ lint :
 	poetry run flake8
 
 coverage:
-	poetry run pytest --cov-report=xml
+	poetry run pytest --cov=app --cov-report=xml
