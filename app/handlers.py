@@ -43,7 +43,7 @@ def handler_transaction(user_id: int,
     return response
 
 
-@app.get('/transaction_user_user/{user_id}')
+@app.get('/transaction_user_user/{user_donor}')
 def handler_transaction_user_user(user_donor: int,
                                   user_recepient: int,
                                   amount: float):

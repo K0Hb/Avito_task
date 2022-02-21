@@ -1,3 +1,5 @@
+import datetime
+
 from request_currency import yahoo_get_currency
 from requests_db import add_history_user, create_user, get_user_info, \
     enrollment_and_write_downs, get_history_user
@@ -48,7 +50,7 @@ def logic_create_user(user_id: int):
 
 
 @hadler_logging
-def logic_get_user_info(user_id: int, currency: str):
+def logic_get_user_info(user_id: int, currency: str = 'RUB'):
     currency_list = ['USD', 'EUR']
     try:
         user_info = get_user_info(user_id)[0]
@@ -63,12 +65,16 @@ def logic_get_user_info(user_id: int, currency: str):
         message = f'Пользователь с id {user_id}, не создан. Исключение: {e}.'
         balance = None
     finally:
-        if currency != 'RUB' and currency in currency_list:
-            currency_rate = yahoo_get_currency(currency)
-            balance = round(
-                float(user_info['balance']) / currency_rate, 2)
-        else:
-            message = f'В валюте {currency}, невозможно рассчитать баланс'
+        if currency != 'RUB':
+            if currency in currency_list and user_info['balance'] is None:
+                balance = 0.0
+            elif currency in currency_list:
+                currency_rate = yahoo_get_currency(currency)
+                balance = round(
+                    float(user_info['balance']) / currency_rate, 2)
+            else:
+                message += f' В валюте {currency}, ' \
+                           f'невозможно рассчитать баланс'
     return message, balance
 
 
@@ -125,17 +131,19 @@ def logic_transaction_user_user(user_donor: int,
                                 amount: float):
     recepient_info = get_user_info(user_recepient)[0]
     donor_info = get_user_info(user_donor)[0]
-    balance = donor_info['balance']
+    balance = donor_info.get('balance', None)
+    if balance is not None:
+        balance = float(balance)
     if recepient_info is not None and donor_info is not None:
-        if donor_info['balance'] is not None \
-                and donor_info['balance'] >= amount:
+        if balance is not None \
+                and balance >= amount:
             purpose = f'Транзакция от пользователся с id {user_donor} к ' \
                       f'пользователю с id {user_recepient}, на сумму {amount}'
             logic_transaction(
                 user_donor, amount, write_down=True, purpose=purpose)
             logic_transaction(
                 user_recepient, amount, enrollment=True, purpose=purpose)
-            balance = donor_info['balance'] - amount
+            balance = balance - amount
             message = f'{purpose}, проведена успешно.'
         else:
             message = f'У пользователя с id {user_donor} ' \
@@ -168,7 +176,7 @@ def logic_get_history(user_id: int,
         else:
             for transaction in history:
                 info_transaction = {
-                    'data': transaction['data'],
+                    'data': transaction['data'].strftime('%Y:%m:%d:%H:%M:%S'),
                     'balance': transaction['balance'],
                     'amount': transaction['amount'],
                     'purpose': transaction['purpose'],
