@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "avito_task"
+name = "avito"
 version = "0.1.0"
 description = "API servic"
 authors = ["Vjacheslav <goplit2010.konovalov@yandex.ru>"]
@@ -13,6 +13,7 @@ uvicorn = "^0.17.5"
 PyMySQL = "^1.0.2"
 requests = "^2.27.1"
 yoyo-migrations = "^7.3.2"
+psycopg2-binary = "^2.9.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.0.1"

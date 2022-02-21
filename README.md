@@ -1,5 +1,11 @@
 <a href="https://codeclimate.com/github/K0Hb/Avito_task/maintainability"><img src="https://api.codeclimate.com/v1/badges/97376614187286510812/maintainability" /></a>
-<a href="https://codeclimate.com/github/K0Hb/Avito_task/test_coverage"><img src="https://api.codeclimate.com/v1/badges/97376614187286510812/test_coverage" /></a>
+
+
+### Установка:
+- `pip install https://github.com/K0Hb/Avito_task.git` - скачиваем проект
+- в файл `env` прописать свои парамерты по примеру `env(example)` для БД (Mysql)
+- `pip install poetry` установка зависимостей
+- `make run` запуск микросервиса
 
 # Avito_task
 

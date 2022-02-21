@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from main_logic import logic_create_user, logic_get_user_info,\
+from app.main_logic import logic_create_user, logic_get_user_info,\
     logic_transaction, logic_transaction_user_user, logic_get_history
 
 LOG = False

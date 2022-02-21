@@ -5,18 +5,14 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      HOST : localhost
+      HOST : 127.0.0.1:33060
       USER_DB : root
       PASSWORD : 22081991
       DB_NAME : Avito
-    command: 
-      - make create_base
-      - make coverage
-      - make run
     ports:
-      - "8000:8000"
+     - "8000:8000"
     volumes:
-      - ".:/app"
+      - ".:/avito"
     depends_on:
       - db
   db:

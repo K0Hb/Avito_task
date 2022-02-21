@@ -1,7 +1,7 @@
 import datetime
 
-from request_currency import yahoo_get_currency
-from requests_db import add_history_user, create_user, get_user_info, \
+from app.request_currency import yahoo_get_currency
+from app.requests_db import add_history_user, create_user, get_user_info, \
     enrollment_and_write_downs, get_history_user
 
 LOG = False
