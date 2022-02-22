@@ -5,9 +5,9 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      HOST : 127.0.0.1:33060
-      USER_DB : root
-      PASSWORD : 22081991
+      HOST : 127.0.0.1:3306
+      USER_DB : lol
+      PASSWORD : secret
       DB_NAME : Avito
     ports:
      - "8000:8000"
@@ -15,9 +15,13 @@ services:
       - ".:/avito"
     depends_on:
       - db
+    command: make docker
   db:
     image: mysql
     command: --default-authentication-plugin=mysql_native_password
     restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: 22081991
+    environment: 
+      - MYSQL_DATABASE= Avito
+      - MYSQL_USER= lol
+      - MYSQL_PASSWORD= secret
+      - MYSQL_ROOT_PASSWORD= secret
