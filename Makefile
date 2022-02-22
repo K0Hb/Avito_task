@@ -15,5 +15,5 @@ install :
 
 docker :
 	yoyo apply --database mysql://root:22081991@localhost/Avito ./migrations
-	uvicorn app.handlers:app --reload
+	make coverage
 
