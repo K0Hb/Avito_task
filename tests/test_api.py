@@ -4,7 +4,7 @@ from fastapi.testclient import TestClient
 
 from app.handlers import app
 from app.requests_db import delete_user, create_user
-from decorator_test import delete_data_test
+from tests.decorator_test import delete_data_test
 
 client = TestClient(app)
 

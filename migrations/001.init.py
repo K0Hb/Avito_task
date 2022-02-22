@@ -1,7 +1,5 @@
 from yoyo import step
 
-# database = 'mysql://root:22081991@localhost/Avito'
-
 steps = [
     step('''CREATE TABLE users_balance (user_id INT PRIMARY KEY UNIQUE, 
     balance DECIMAL(15,2));'''
