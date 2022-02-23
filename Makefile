@@ -13,7 +13,10 @@ create_base:
 install : 
 	poetry install
 
-docker :
+crate_table :
 	yoyo apply --database mysql://root:22081991@localhost/Avito ./migrations
+
+docker :
+	meke crate_table
 	make coverage
 
