@@ -8,6 +8,7 @@
 - `pip install https://github.com/K0Hb/Avito_task.git` - скачиваем проект
 - в файл `env` прописать свои парамерты по примеру `env(example)` для БД (Mysql)
 - `pip install poetry` установка зависимостей
+- `make create_table` создаем таблицы
 - `make run` запуск микросервиса
 
 ## Список запросов API:
